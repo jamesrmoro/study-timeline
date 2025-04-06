@@ -1,0 +1,48 @@
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f4f4f9;
+  padding: 2rem;
+  color: #333;
+}
+
+.timeline-container {
+  max-width: 600px;
+  margin: auto;
+  background: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+ul#timeline {
+  list-style: none;
+  padding-left: 10px;
+}
+
+ul#timeline li {
+  position: relative;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-left: 4px solid #6c63ff;
+  background: #f9f9ff;
+  border-radius: 0.5rem;
+}
+
+ul#timeline li a.link {
+  display: flex;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+ul#timeline li::before {
+  content: "📌 ";
+  position: absolute;
+  left: -30px;
+  top: 1.2rem;
+}

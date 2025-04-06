@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Timeline de Estudos</title>
+  <link rel="stylesheet" href="timeline.css" />
+</head>
+<body>
+  <main class="timeline-container">
+    <h1>📚 Timeline de Estudos</h1>
+    <ul id="timeline">
+      <!-- Itens da timeline são carregados via API do GitHub -->
+    </ul>
+    <div id="download-backup" style="margin-top: 2rem;"></div>
+  </main>
+
+  <script>
+    const repo = "jamesrmoro/study-timeline"; // Altere para o seu repositório
+
+    fetch(`https://api.github.com/repos/${repo}/commits`)
+      .then(res => res.json())
+      .then(data => {
+        const timeline = document.getElementById("timeline");
+        const commitsBackup = [];
+
+        data.forEach(commit => {
+          const message = commit.commit.message;
+          const date = new Date(commit.commit.author.date).toLocaleDateString("pt-BR");
+
+          const match = message.match(/(.*)\|\s*(https?:\/\/[^\s]+)/);
+
+          const li = document.createElement("li");
+
+          if (match) {
+            const [_, titulo, url] = match;
+            const isYouTube = url.includes("youtu");
+
+            li.innerHTML = `
+              <strong>${titulo.trim()}</strong><br />
+              <small>📅 ${date}</small><br />
+              <a href="${url}" target="_blank" class='link'>
+                <img src="${isYouTube
+                  ? "https://img.icons8.com/fluency/24/youtube-play.png"
+                  : "https://img.icons8.com/ios-filled/24/document--v1.png"}"
+                  alt="${isYouTube ? "YouTube" : "Artigo"}" />
+                ${isYouTube ? "<span>Watch on YouTube</span>" : "<span>Read article</span>"}
+              </a>
+            `;
+
+            commitsBackup.push({ message, date: commit.commit.author.date });
+          } else {
+            li.innerHTML = `
+              <strong>${message}</strong><br />
+              <small>📅 ${date}</small>
+            `;
+
+            commitsBackup.push({ message, date: commit.commit.author.date });
+          }
+
+          timeline.appendChild(li);
+        });
+
+        // Criar o JSON de backup para download
+        const blob = new Blob([JSON.stringify(commitsBackup, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+
+        const downloadLink = document.createElement("a");
+        downloadLink.href = url;
+        downloadLink.download = "commits.json";
+        downloadLink.textContent = "⬇️ Baixar backup dos commits";
+        downloadLink.style.display = "inline-block";
+        downloadLink.style.marginTop = "10px";
+        downloadLink.style.fontSize = "14px";
+
+        document.getElementById("download-backup").appendChild(downloadLink);
+      });
+  </script>
+</body>
+</html>
